@@ -81,7 +81,7 @@ Faster propagation does not directly increase the proposer's consensus rewards â
 
 We estimate this by comparing the reorg rate of boosted vs. non-boosted blocks (from the Effectiveness section) and multiplying the reorg rate delta by the average block value:
 
-$$\Delta_{yield} = \Delta_{reorg_rate} \times \overline{V_{block}}$$
+$$\Delta_{yield} = \Delta_{reorg} \times \overline{V_{block}}$$
 
 where $\overline{V_{block}}$ is the average execution layer value per block. This gives us a per-slot expected value gain that can be extrapolated over the proposer's expected number of slots per year.
 
