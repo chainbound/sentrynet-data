@@ -8,9 +8,9 @@ The core question we aim to answer is:
 
 We decompose this into three layers of analysis:
 
-1. **Latency** — How fast can we propagate blocks and their data column sidecars compared to regular GossipSub?
-2. **Effectiveness** — How does this latency advantage translate into proposer effectiveness (correct head vote rates, reorg rates)?
-3. **Yield** — How does improved effectiveness translate into increased validator yield, and how can timing games amplify this?
+1. **Latency**: How fast can we propagate blocks and their data column sidecars compared to regular GossipSub?
+2. **Effectiveness**: How does this latency advantage translate into proposer effectiveness (correct head vote rates, reorg rates)?
+3. **Yield**: How does improved effectiveness translate into increased validator yield, and how can timing games amplify this?
 
 Each layer builds on the previous: latency drives effectiveness, effectiveness drives yield.
 
@@ -40,7 +40,7 @@ Each layer builds on the previous: latency drives effectiveness, effectiveness d
 | $d$ | Proposer delay (seconds into slot at which the block is released) | seconds |
 | $\alpha$ | Significance level for hypothesis tests | $0.05$ |
 
-**Conventions.** All timestamps use a single time basis (Unix seconds). Unless stated otherwise, external latency uses observations indexed by $(b, j)$; effectiveness and yield use block-level observations indexed by $b$. Results are reported overall and stratified by blob count $K_b$.
+**Conventions.** All timestamps use a single time basis (Unix milliseconds). Unless stated otherwise, external latency uses observations indexed by $(b, j)$; effectiveness and yield use block-level observations indexed by $b$. Results are reported overall and stratified by blob count $K_b$.
 
 ## 3. Datasets
 
@@ -133,9 +133,12 @@ $$\hat{F}_D(t) = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\{D_i \le t\}$$
 
 **Method.** For each block $b$, we define the start time $S_b$ from the relay's `mev_relay_proposer_payload_delivered` timestamp (approximating network release time). We restrict to blocks propagated by our partner relay.
 
-For each vantage point $j \in \mathcal{J}$, we compute:
+Blocks and their data column sidecars propagate independently over the P2P network. The primary metric in this section is **block propagation latency** — column count does not affect it. For each vantage point $j \in \mathcal{J}$, we compute:
 
 $$L_{b,j} \triangleq A_{b,j} - S_b \quad \text{(block latency)}$$
+
+We additionally record column sidecar latency as a supplementary data point for future analysis:
+
 $$L^{(c)}_{b,j} \triangleq A^{(c)}_{b,j} - S_b \quad \text{(column latency)}$$
 
 To reduce dependence on the number of observers and make the unit of analysis clearly "a block," we first compute **block-level summaries**:
@@ -162,13 +165,15 @@ $$\Delta q(p) = \hat{q}_{\text{control}}(p) - \hat{q}_{\text{boosted}}(p), \quad
 
 #### 5.2.1 Correct Head Vote Rate
 
+While blocks propagate independently of their column sidecars, attesters cannot vote for a block's head until they have received a sufficient fraction of its data columns (for data availability). This means that even if a block arrives quickly, attestation depends on column completeness, which means that blocks with more columns are harder to attest to in time.
+
 For each block $b$, define:
 
 $$H_b \triangleq \frac{C_b}{N_b}$$
 
 where $C_b$ is the number of correct head votes at inclusion delay = 1, and $N_b$ is the committee size for that slot.
 
-**Primary estimand** (overall and stratified by blob count $K_b$):
+**Primary estimand** (overall and stratified by blob count $K_b$, since higher blob counts require more columns to be received before attestation):
 
 $$\Delta_H = \mathbb{E}[H_b \mid G_b = \text{boosted}] - \mathbb{E}[H_b \mid G_b = \text{control}]$$
 
