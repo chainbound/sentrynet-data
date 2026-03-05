@@ -216,7 +216,9 @@ where $\overline{V}_g$ is the mean execution-layer value for group $g$.
 
 Assuming comparable value distributions across groups, the **per-block reorg protection gain** is:
 
-$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}#### 5.3.2 Timing Games
+$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}
+
+#### 5.3.2 Timing Games
 
 If SentryNet can reliably propagate blocks faster, proposers can afford to delay their proposal time to capture more MEV value from the builder auction, without sacrificing attestation inclusion. This is the core timing game tradeoff: later proposals capture more value but risk losing attestations and being reorged.
 
