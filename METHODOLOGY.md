@@ -4,7 +4,7 @@
 
 The core question we aim to answer is:
 
-> _How much of a broadcast advantage does SentryNet offer to a proposer over the regular GossipSub network?_
+> _How much of a broadcast advantage does SentryNet + DoubleZero offer to a proposer over the regular GossipSub network?_
 
 We decompose this into three layers of analysis:
 
