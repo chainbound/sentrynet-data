@@ -32,7 +32,7 @@ Each layer builds on the previous: latency drives effectiveness, effectiveness d
 | $n$ | SentryNet internal node index | — |
 | $A^{DZ}_{m,n}$ | Arrival time of message $m$ at node $n$ via DoubleZero | milliseconds |
 | $A^{GS}_{m,n}$ | Arrival time of message $m$ at node $n$ via GossipSub | milliseconds |
-| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n}$ $-$ $A^{DZ}_{m,n}$ | milliseconds |
+| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n} - A^{DZ}_{m,n}$ | milliseconds |
 | $H_b$ | Correct head vote rate for block $b$ | $[0,1]$ |
 | $R_b$ | Reorg indicator for block $b$ | $\{0,1\}$ |
 | $V_b$ | Execution-layer value of block $b$ (priority fees + MEV) | ETH |
