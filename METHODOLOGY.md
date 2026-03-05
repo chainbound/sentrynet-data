@@ -24,23 +24,23 @@ Each layer builds on the previous: latency drives effectiveness, effectiveness d
 | $\mathcal{B}$ | Set of sampled blocks | — |
 | $\mathcal{J}$ | Set of external observer nodes (Xatu vantage points) | — |
 | $G_b$ | Group label for block $b$ | $\{\text{boosted},\ \text{control}\}$ |
-| $S_b$ | Start timestamp — approximate network release time of block $b$ | seconds |
-| $A_{b,j}$ | Arrival timestamp of block $b$ at vantage point $j \in \mathcal{J}$ | seconds |
-| $A^{(c)}_{b,j}$ | Arrival timestamp of column sidecar $c$ for block $b$ at vantage point $j$ | seconds |
-| $L_{b,j}$ | Block propagation latency: $A_{b,j} - S_b$ | seconds |
-| $L^{(c)}_{b,j}$ | Column propagation latency: $A^{(c)}_{b,j} - S_b$ | seconds |
+| $S_b$ | Start timestamp — approximate network release time of block $b$ | milliseconds |
+| $A_{b,j}$ | Arrival timestamp of block $b$ at vantage point $j \in \mathcal{J}$ | milliseconds |
+| $A^{(c)}_{b,j}$ | Arrival timestamp of column sidecar $c$ for block $b$ at vantage point $j$ | milliseconds |
+| $L_{b,j}$ | Block propagation latency: $A_{b,j} - S_b$ | milliseconds |
+| $L^{(c)}_{b,j}$ | Column propagation latency: $A^{(c)}_{b,j} - S_b$ | milliseconds |
 | $n$ | SentryNet internal node index | — |
-| $A^{DZ}_{m,n}$ | Arrival time of message $m$ at node $n$ via DoubleZero | seconds |
-| $A^{GS}_{m,n}$ | Arrival time of message $m$ at node $n$ via GossipSub | seconds |
-| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n} - A^{DZ}_{m,n}$ | seconds |
+| $A^{DZ}_{m,n}$ | Arrival time of message $m$ at node $n$ via DoubleZero | milliseconds |
+| $A^{GS}_{m,n}$ | Arrival time of message $m$ at node $n$ via GossipSub | milliseconds |
+| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n} - A^{DZ}_{m,n}$ | milliseconds |
 | $H_b$ | Correct head vote rate for block $b$ | $[0,1]$ |
 | $R_b$ | Reorg indicator for block $b$ | $\{0,1\}$ |
-| $V_b$ | Execution-layer value of block $b$ (tips + priority fees + MEV) | ETH |
+| $V_b$ | Execution-layer value of block $b$ (priority fees + MEV) | ETH |
 | $K_b$ | Blob count for block $b$ | $\mathbb{N}_0$ |
-| $d$ | Proposer delay (seconds into slot at which the block is released) | seconds |
+| $d$ | Proposer delay (ms into slot at which the block is released) | milliseconds |
 | $\alpha$ | Significance level for hypothesis tests | $0.05$ |
 
-**Conventions.** All timestamps use a single time basis (Unix milliseconds). Unless stated otherwise, external latency uses observations indexed by $(b, j)$; effectiveness and yield use block-level observations indexed by $b$. Results are reported overall and stratified by blob count $K_b$.
+**Conventions.** All timestamps use a single time basis (Unix milliseconds). Unless stated otherwise, external latency uses observations indexed by $(b, j)$; effectiveness and yield use block-level observations indexed by $b$. Results are reported overall and stratified by blob count $K_b$ where relevant.
 
 ## 3. Datasets
 
@@ -220,7 +220,7 @@ $$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}#
 
 If SentryNet can reliably propagate blocks faster, proposers can afford to delay their proposal time to capture more MEV value from the builder auction, without sacrificing attestation inclusion. This is the core timing game tradeoff: later proposals capture more value but risk losing attestations and being reorged.
 
-Define the proposer delay $d$ (seconds into the slot at which the block is released). For each delay $d$, let:
+Define the proposer delay $d$ (milliseconds into the slot at which the block is released). For each delay $d$, let:
 
 - $\pi(d)$: reorg probability at delay $d$
 - $V(d)$: expected execution-layer value at delay $d$
