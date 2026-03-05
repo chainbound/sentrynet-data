@@ -32,7 +32,7 @@ Each layer builds on the previous: latency drives effectiveness, effectiveness d
 | $n$ | SentryNet internal node index | — |
 | $A^{DZ}_{m,n}$ | Arrival time of message $m$ at node $n$ via DoubleZero | milliseconds |
 | $A^{GS}_{m,n}$ | Arrival time of message $m$ at node $n$ via GossipSub | milliseconds |
-| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n} - A^{DZ}_{m,n}$ | milliseconds |
+| $D_{m,n}$ | Internal latency gain: $A^{GS}_{m,n}$ $-$ $A^{DZ}_{m,n}$ | milliseconds |
 | $H_b$ | Correct head vote rate for block $b$ | $[0,1]$ |
 | $R_b$ | Reorg indicator for block $b$ | $\{0,1\}$ |
 | $V_b$ | Execution-layer value of block $b$ (priority fees + MEV) | ETH |
@@ -216,7 +216,7 @@ where $\overline{V}_g$ is the mean execution-layer value for group $g$.
 
 Assuming comparable value distributions across groups, the **per-block reorg protection gain** is:
 
-$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}
+$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}$$
 
 #### 5.3.2 Timing Games
 
