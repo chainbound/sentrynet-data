@@ -78,15 +78,26 @@ Formally, each block $b \in \mathcal{B}$ is assigned a group label $G_b \in \{\t
 
 | Confounder | Risk | Mitigation |
 |---|---|---|
-| Relay/builder effects | Different relays have different delivery timing and value distributions | Restrict both groups to the same relay(s); report per-relay when possible |
-| Time-varying network conditions | Propagation depends on global load and diurnal patterns | Compare within the same time window; include time-of-day stratification |
-| Block characteristics | Blob count and block size affect propagation speed | Stratify on blob count $K_b$; optionally on block size/value quantiles |
-| Proposer infrastructure | SentryNet proposers may have better setups independent of boosting | When feasible, compare within the same proposer set or include proposer fixed effects |
-| Observer bias | Xatu nodes are not uniformly distributed | Aggregate via block-level summaries (e.g., $\tilde{L}_b = \text{median}_{j \in \mathcal{J}}(L_{b,j})$); use cluster bootstrap by block |
+| Relay/builder effects | Different relays have different delivery timing and value distributions | Eliminated by randomized boosting within the same relay |
+| Time-varying network conditions | Propagation depends on global load and daily patterns | Eliminated by randomized boosting (balanced in expectation); additionally stratify by time-of-day |
+| Block characteristics | Blob count and block size affect propagation speed | Eliminated by randomized boosting (balanced in expectation); additionally stratify by blob count $K_b$ for subgroup analysis |
+| Proposer infrastructure | SentryNet proposers may have better setups independent of boosting | Eliminated by randomized boosting, both groups contain the same proposer population |
 
-### 4.3 Interpretation
+### 4.3 Randomized Boosting
 
-All reported results are **associational** unless boosting assignment is randomized. For timing-game experiments with controlled assignment of proposal delays, estimates can be interpreted closer to causal effects, subject to remaining measurement limitations.
+To move beyond associational results, we employ a **randomized controlled design** for blocks sourced from our partner relay. For each incoming block, a hash-based coin flip determines whether it is boosted:
+
+$$G_b = \begin{cases} \text{boosted} & \text{if } \text{hash}(b) \mod 100 < X \\ \text{control} & \text{otherwise} \end{cases}$$
+
+where $X$ is the target boost percentage (tunable). Because the block hash is independent of proposer identity, infrastructure, blob count, and all other confounders, this produces groups that are balanced in expectation.
+
+### 4.4 Interpretation
+
+With randomized boosting, results from the external latency, effectiveness, and yield analyses can be interpreted as **causal**: any observed difference between groups is attributable to the boosting itself, not to confounders.
+
+Internal latency is causal by construction (paired measurement: same message, same node, two paths).
+
+For timing-game experiments with controlled assignment of proposal delays, estimates can similarly be interpreted as causal, subject to remaining measurement limitations.
 
 ## 5. Methodology
 
@@ -102,8 +113,10 @@ $$D_{m,n} \triangleq A^{GS}_{m,n} - A^{DZ}_{m,n}$$
 
 A positive $D_{m,n}$ indicates that the DoubleZero path was faster. We report the empirical distribution of $D$ via:
 
-- Summary statistics: $\text{median}(D)$, $\hat{q}_{0.90}(D)$, $\hat{q}_{0.99}(D)$
-- Empirical CDF: $\hat{F}_D(t) = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\{D_i \le t\}$
+- Summary statistics: median, p90, and p99 of $D$
+- Empirical CDF:
+
+$$\hat{F}_D(t) = \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\{D_i \le t\}$$
 
 **Hypothesis test.** One-sided Wilcoxon signed-rank test:
 - $H_0$: $\text{median}(D) \le 0$ (no improvement)
@@ -175,7 +188,7 @@ $$\pi_g \triangleq \mathbb{P}(R_b = 1 \mid G_b = g), \quad \hat{\pi}_g = \frac{1
 
 **Hypothesis test.** Fisher's exact test on the 2×2 contingency table (recommended for rare events).
 
-**Confidence intervals.** Exact (Clopper–Pearson) CIs for each $\hat{\pi}_g$; Newcombe CI for $\Delta_\pi$.
+**Confidence intervals.** Exact (Clopper–Pearson) CIs for each group rate; Newcombe CI for the risk difference.
 
 > [!NOTE]
 > Reorgs are rare events. If the baseline reorg rate is on the order of 0.1–1%, meaningful inference may require weeks to months of data collection.
@@ -194,9 +207,9 @@ Let $V_b$ be the execution-layer value if the block remains canonical. The expec
 
 $$\mathbb{E}[\text{EL}_b \mid G_b = g] \approx (1 - \pi_g) \cdot \overline{V}_g$$
 
-where $\overline{V}_g = \mathbb{E}[V_b \mid G_b = g]$.
+where $\overline{V}_g$ is the mean execution-layer value for group $g$.
 
-Assuming comparable value distributions across groups ($\overline{V}_{\text{boosted}} \approx \overline{V}_{\text{control}} \approx \overline{V}$), the **per-block reorg protection gain** is:
+Assuming comparable value distributions across groups, the **per-block reorg protection gain** is:
 
 $$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}) \cdot \overline{V}$$
 
