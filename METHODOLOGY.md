@@ -216,7 +216,7 @@ where $\overline{V}_g$ is the mean execution-layer value for group $g$.
 
 Assuming comparable value distributions across groups, the **per-block reorg protection gain** is:
 
-$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}$$
+$$\Delta_{\text{reorg}} \triangleq (\pi_{\text{control}} - \pi_{\text{boosted}}) \cdot \overline{V}$$
 
 #### 5.3.2 Timing Games
 
